@@ -72,7 +72,10 @@ const ball = {
 
 // empty goals array, starts empty, fills up to 10 on the screen at the start of a game
 const goals = [];
-// console.log(goals)
+// variable for max goals array length
+let maxGoals = 9;
+
+let animRequest;
 
 // the scoring zone (goals) are randomly distributed – position, radius and points
 const goalFactory = function () {
@@ -93,13 +96,12 @@ const goalFactory = function () {
   goals.push(goal);
 };
 
-// variable for max goals array length
-let maxGoals = 9;
 
 // setupGoals functions populates the goals array when called
 const setupGoals = function () {
   // initial length of the goals array on load is 0
   goals.length = 0;
+
   // loop over the goals array, if index is less than 10 elements, iterate over filling array
   for (let i = 0; i <= maxGoals; i++) {
     // call goalFactory to push goal objects into the goals array until the loop is done
@@ -166,10 +168,9 @@ const scoreDetection = function () {
     const distance = Math.sqrt(c[0] * c[0] + c[1] * c[1]);
     // if the distance between the ball and goal is less than the sum of their radii, 
     // the user scores a goal
-    if (distance < goal.radius + ball.radius) {
+    if (distance < (goal.radius + ball.radius)) {
       scoreGoal(goal);
-      console.log(maxGoals);
-      
+      console.log(maxGoals);      
     }
   }
 };
@@ -189,24 +190,7 @@ const scoreGoal = function (goal) {
   setupGoals();
 };
 
-// function reduceGoals removes one index element from goals array
-// const reduceGoals = function () {
-//   if (goals.length > 0) {
-//     goals.length = goals.length - 1;
-//   }
-// };
-
-
-// new function resetGoals returns a new array of goals objects from the goalFactory on scoreGoal
-// 
-// OR
-// the number of goals in the array is decided by the round number
-// round 1 = 10, round 2 = 9, round 3 = 8, etc
-// 
-
-
-
-// function to render the game area, ball and goal objects
+// function to render the game, ball and goal objects
 const render = function () {
   // ctx.clearRect(0, 0, c.width, c.height);
 
@@ -234,36 +218,53 @@ const render = function () {
   });
 };
 
-let animRequest;
-
 // failState function that detects when userScore threshold in under 1500 pts, ends game
 // clears game area
 // appends fail state message, invites user to try again
 // const failState = function () {
-//   if (playing && userScore <= -1500) {
+//   if (playing) {
 //     cancelAnimationFrame(animRequest);
-//     userScore = 0;
+//     // userScore = 0;
 //     playing = false;
+//     // maxGoals = 9;
+//     console.log("You died.");
+
 //   }
 // }
 
-// winState function that detects when goals array is reduced to 0, ends game
-// clears game area
-// appends win state message, invites user to try again
+// // winState function that detects when goals array is reduced to 0, ends game
+// // clears game area
+// // appends win state message, invites user to try again
 // const winState = function () {
-//   if (playing && goals.length = 0) {
-//     cancelAnimationFrame(animRequest);
+//   if (playing) {
+//     // userScore = 0;
 //     playing = false;
+//     // maxGoals = 9;
+//     console.log('You got lucky.');
+    
 //   }
 // }
 
 // endLoop function calls the failState or 
-// const endLoop = function () {
-//   failState();
-//   winState();
-// }
+const endLoop = function () {
+  if (goals.length === 0) {
+    cancelAnimationFrame(animRequest);
+    // userScore = 0;
+    playing = false;
+    // maxGoals = 9;
+    console.log("You got lucky.");
+  } else if (userScore <= -1500) {
+    cancelAnimationFrame(animRequest);
+    // userScore = 0;
+    playing = false;
+    // maxGoals = 9;
+    console.log("You died.");
+  } else {
+    console.log("still playing.");
+  }
+}
 
-// runLoop function callstack that is itself called on click
+// runLoop function callstack for functions that need to be continually updated
 const runLoop = function () {
   // save animation request in a varable
   animRequest = requestAnimationFrame(runLoop);
@@ -273,11 +274,15 @@ const runLoop = function () {
   positionBall();
   render();
   scoreDetection();
-
+  console.log(userScore);
+  console.log(playing);
+  console.log(goals.length);
   
-  // gameOver();
-  // endLoop();
+  endLoop();
 };
+
+
+
 
 
 // event listener on the canvas for user input
