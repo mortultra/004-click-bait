@@ -248,17 +248,19 @@ const winState = function () {
 // endLoop function calls the failState or 
 const endLoop = function () {
   if (goals.length === 0) {
+    // cancel rAF in runLoop
     cancelAnimationFrame(animRequest);
-    // userScore = 0;
+    userScore = 0;
     playing = false;
-    // maxGoals = 9;
+    maxGoals = 9;
     ctx.clearRect(0, 0, c.width, c.height);
     console.log("You got lucky.");
   } else if (userScore <= -1500) {
+    // cancel rAF in runLoop
     cancelAnimationFrame(animRequest);
-    // userScore = 0;
+    userScore = 0;
     playing = false;
-    // maxGoals = 9;
+    maxGoals = 9;
     console.log("You died.");
     ctx.clearRect(0, 0, c.width, c.height);
   } else {
