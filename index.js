@@ -221,29 +221,29 @@ const render = function () {
 // failState function that detects when userScore threshold in under 1500 pts, ends game
 // clears game area
 // appends fail state message, invites user to try again
-// const failState = function () {
-//   if (playing) {
-//     cancelAnimationFrame(animRequest);
-//     // userScore = 0;
-//     playing = false;
-//     // maxGoals = 9;
-//     console.log("You died.");
+const failState = function () {
+  if (playing) {
+    cancelAnimationFrame(animRequest);
+    // userScore = 0;
+    playing = false;
+    // maxGoals = 9;
+    console.log("You died.");
 
-//   }
-// }
+  }
+}
 
 // // winState function that detects when goals array is reduced to 0, ends game
 // // clears game area
 // // appends win state message, invites user to try again
-// const winState = function () {
-//   if (playing) {
-//     // userScore = 0;
-//     playing = false;
-//     // maxGoals = 9;
-//     console.log('You got lucky.');
+const winState = function () {
+  if (playing) {
+    // userScore = 0;
+    playing = false;
+    // maxGoals = 9;
+    console.log('You got lucky.');
     
-//   }
-// }
+  }
+}
 
 // endLoop function calls the failState or 
 const endLoop = function () {
@@ -252,6 +252,7 @@ const endLoop = function () {
     // userScore = 0;
     playing = false;
     // maxGoals = 9;
+    ctx.clearRect(0, 0, c.width, c.height);
     console.log("You got lucky.");
   } else if (userScore <= -1500) {
     cancelAnimationFrame(animRequest);
@@ -259,6 +260,7 @@ const endLoop = function () {
     playing = false;
     // maxGoals = 9;
     console.log("You died.");
+    ctx.clearRect(0, 0, c.width, c.height);
   } else {
     console.log("still playing.");
   }
