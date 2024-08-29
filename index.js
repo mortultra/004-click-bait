@@ -218,31 +218,25 @@ const render = function () {
   });
 };
 
-// failState function that detects when userScore threshold in under 1500 pts, ends game
-// clears game area
-// appends fail state message, invites user to try again
-const failState = function () {
-  if (playing) {
-    cancelAnimationFrame(animRequest);
-    // userScore = 0;
-    playing = false;
-    // maxGoals = 9;
-    console.log("You died.");
+const notifyWin = function () {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#C0FF33";
+  ctx.fillText(`You got lucky.`, 50, 50);
+};
 
-  }
-}
+const notifyLoss = function () {
+  ctx.font = "16px Arial";
+  ctx.fillStyle = "#C0FF33";
+  ctx.fillText(`You died.`, 50, 50);
+};
 
-// // winState function that detects when goals array is reduced to 0, ends game
-// // clears game area
-// // appends win state message, invites user to try again
-const winState = function () {
-  if (playing) {
-    // userScore = 0;
-    playing = false;
-    // maxGoals = 9;
-    console.log('You got lucky.');
-    
-  }
+const resetGame = function () {
+  playing = false;
+  userScore = 0;
+  goals = [];
+  maxGoals = 9;
+  ctx.fillStyle = "#222222";
+  ctx.fillRect(0, 0, c.width, c.height);
 }
 
 // endLoop function calls the failState or 
@@ -250,22 +244,24 @@ const endLoop = function () {
   if (goals.length === 0) {
     // cancel rAF in runLoop
     cancelAnimationFrame(animRequest);
-    userScore = 0;
     playing = false;
-    maxGoals = 9;
-    ctx.clearRect(0, 0, c.width, c.height);
+    // ctx.clearRect(0, 0, c.width, c.height);
     console.log("You got lucky.");
+    notifyWin();
   } else if (userScore <= -1500) {
     // cancel rAF in runLoop
     cancelAnimationFrame(animRequest);
-    userScore = 0;
     playing = false;
-    maxGoals = 9;
+    // ctx.clearRect(0, 0, c.width, c.height);
     console.log("You died.");
-    ctx.clearRect(0, 0, c.width, c.height);
+    notifyLoss();
   } else {
     console.log("still playing.");
   }
+}
+
+const gameOver = function () {
+
 }
 
 // runLoop function callstack for functions that need to be continually updated
