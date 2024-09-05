@@ -75,7 +75,7 @@ const goals = [];
 // variable for max goals array length
 let maxGoals = 9;
 
-let animRequest;
+let reqAnim;
 
 // the scoring zone (goals) are randomly distributed – position, radius and points
 const goalFactory = function () {
@@ -119,8 +119,11 @@ let round = 0;
 ctx.fillStyle = "#222222";
 ctx.fillRect(0, 0, c.width, c.height);
 
-// initial state on load, not executing ball/goal functions
+// initial playing state on load, not executing ball/goal functions
 let playing = false;
+
+// initial game state on load
+let gameOver = false;
 
 // position of ball
 const positionBall = function () {
@@ -218,69 +221,66 @@ const render = function () {
   });
 };
 
+// message for win state, called in endLoop function
 const notifyWin = function () {
   ctx.font = "16px Arial";
-  ctx.fillStyle = "#C0FF33";
+  ctx.fillStyle = "#000";
   ctx.fillText(`You got lucky.`, 50, 50);
 };
 
+// message for lose state, called in endLoop function
 const notifyLoss = function () {
   ctx.font = "16px Arial";
-  ctx.fillStyle = "#C0FF33";
+  ctx.fillStyle = "#000";
   ctx.fillText(`You died.`, 50, 50);
 };
 
-const resetGame = function () {
-  playing = false;
-  userScore = 0;
-  goals = [];
-  maxGoals = 9;
-  ctx.fillStyle = "#222222";
-  ctx.fillRect(0, 0, c.width, c.height);
+const cancelAnim = function () {
+  // cancel rAF in runLoop
+  cancelAnimationFrame(reqAnim);
 }
 
-// endLoop function calls the failState or 
+const clearCanvas = function () {
+  ctx.clearRect(0, 0, c.width, c.height);
+}
+
+// endLoop function 
 const endLoop = function () {
   if (goals.length === 0) {
-    // cancel rAF in runLoop
-    cancelAnimationFrame(animRequest);
     playing = false;
-    // ctx.clearRect(0, 0, c.width, c.height);
-    console.log("You got lucky.");
+    gameOver = true;
+    cancelAnim();
+    clearCanvas();
     notifyWin();
+    console.log(`playing: ${playing}`);
+    console.log(`game over: ${gameOver}`);
   } else if (userScore <= -1500) {
-    // cancel rAF in runLoop
-    cancelAnimationFrame(animRequest);
     playing = false;
-    // ctx.clearRect(0, 0, c.width, c.height);
-    console.log("You died.");
+    gameOver = true;
+    cancelAnim();
+    clearCanvas();
     notifyLoss();
-  } else {
-    console.log("still playing.");
+    console.log(`playing: ${playing}`);
+    console.log(`game over: ${gameOver}`);
   }
-}
-
-const gameOver = function () {
-
 }
 
 // runLoop function callstack for functions that need to be continually updated
 const runLoop = function () {
   // save animation request in a varable
-  animRequest = requestAnimationFrame(runLoop);
+  reqAnim = requestAnimationFrame(runLoop);
   // if playing = true, then execute requestAnimationFrame method
-  if (playing) animRequest;
-  // call position, render, scoreDetection functions 
+  if (playing) {
+    reqAnim;
+  }
+  // call position, render, scoreDetection functions
   positionBall();
   render();
   scoreDetection();
-  console.log(userScore);
-  console.log(playing);
-  console.log(goals.length);
-  
+  console.log(`score: ${userScore}`);
+  console.log(`goals remaining: ${goals.length}`);
   endLoop();
 };
-
 
 
 
@@ -292,6 +292,6 @@ c.addEventListener("click", function () {
     requestAnimationFrame(runLoop);
     playing = true;
   }
-  // else on every click after, call changeBallDirection function
+  // on every click after, call changeBallDirection function
   changeBallDirection();
 });
